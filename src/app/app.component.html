@@ -1,0 +1,195 @@
+<mat-progress-bar color="accent" mode="determinate" [value]="percentage"></mat-progress-bar>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav [mode]="mode.value" style="overflow-x: hidden;">
+    <mat-toolbar>
+      <span style="flex:1">Menu</span>
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar>
+    <p style="text-align: center;">
+      <img src="/assets/icon.png" class="margin1">
+    </p>
+    <mat-nav-list class="margin1">
+      <a mat-list-item href="https://angular.io" target="_blank">Angular</a>
+      <a mat-list-item href="https://material.angular.io" target="_blank">Material</a>
+      <a mat-list-item href="https://material.io/guidelines/style/color.html#color-color-palette" target="_blank">Themes</a>
+      <a mat-list-item href="https://material.io/icons/" target="_blank">Icons</a>
+    </mat-nav-list>
+
+    <mat-radio-group class="margin1 padding1" style="margin-top:40px; display:block; text-align:center" [formControl]="mode">
+      <label>Mode:</label>
+      <mat-radio-button value="over">Over</mat-radio-button>
+      <mat-radio-button value="side">Side</mat-radio-button>
+      <mat-radio-button value="push">Push</mat-radio-button>
+    </mat-radio-group>
+  </mat-sidenav>
+
+  <mat-sidenav-content style="display:flex; flex-direction: column;">
+    <mat-toolbar>
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span style="flex:1"></span>
+      <span>Raspberry Pi</span>
+      <span style="flex:1"></span>
+      <button mat-icon-button (click)="togglePaused()" matTooltip="Sensors automatisch uitlezen weer starten" *ngIf="paused">
+        <mat-icon color="primary">play_arrow</mat-icon>
+      </button>
+      <button mat-icon-button (click)="togglePaused()" matTooltip="Sensors uitlezen pauzeren" *ngIf="!paused">
+        <mat-icon>pause</mat-icon>
+      </button>
+      <button mat-icon-button (click)="refresh()" matTooltip="Instellingen opnieuw ophalen en sensors uitlezen">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button (click)="save()" matTooltip="Instellingen opslaan" *ngIf="saveEnabled()">
+        <mat-icon color="primary">save</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div style="overflow:auto; flex:1;">
+      <mat-tab-group>
+        <mat-tab label="Thermostaat">
+          <div class="margin1">
+            <h1>Welkom bij de thermostaat</h1>
+            <p>Hier kunt u de status bekijken.</p>
+          </div>
+          <div class="cards1">
+            <mat-card>
+              <mat-card-content style="display:flex; flex-wrap: wrap" class="nomargin">
+                <span>
+                  <h1>{{status?.slimmeMeter?.read_time | date:apiService.timeFormat}}</h1>
+                </span>
+                <span style="flex:1"></span>
+                <span>
+                  <h1>{{status?.slimmeMeter?.watt}} Watt</h1>
+                </span>
+                <div class="break" style="height:50px"></div>
+                <span style="flex:1;">
+                  <mat-icon class="hide-sm" *ngIf="status?.heating==true" color="primary" style="font-size:90px; width:90px; height:90px; padding-top:15px;">flash_on</mat-icon>&nbsp;
+                  <mat-icon class="hide-md hide-lg" *ngIf="status?.heating==true" color="primary" style="font-size:56px; width:56px; height:56px">flash_on</mat-icon>&nbsp;
+                </span>
+                <span>
+                  <h1 class="hide-sm mat-display-4">{{status?.dht22?.temperature | number:'1.1-1'}}&nbsp;</h1>
+                  <h1 class="hide-md hide-lg mat-display-3">{{status?.dht22?.temperature | number:'1.1-1'}}&nbsp;</h1>
+                </span>
+                <span class="hide-sm mat-h1" style="padding-top:10px;">℃</span>
+                <span class="hide-md hide-lg mat-h1">℃</span>
+                <span style="flex:1"></span>
+                <div class="break" style="height:50px"></div>
+                <div style="display:flex; align-items:center;">
+                  <button mat-icon-button (click)="quick(-0.5)" matTooltip="Thermostaat temperatuur verlagen" matTooltipPosition="below">
+                    <mat-icon color="primary">keyboard_arrow_down</mat-icon>
+                  </button>
+                  <span>
+                    <h1>{{settings?.temperature | number:'1.1-1'}} ℃</h1>
+                  </span>
+                  <button mat-icon-button (click)="quick(0.5)" matTooltip="Thermostaat temperatuur verhogen" matTooltipPosition="below">
+                    <mat-icon color="primary">keyboard_arrow_up</mat-icon>
+                  </button>
+                </div>
+                <span style="flex:1"></span>
+                <span>
+                  <h1>{{status?.dht22?.humidity | number:'1.1-1'}} %</h1>
+                </span>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Instellingen">
+          <div class="margin1">
+            <h1>Welkom bij de instellingen</h1>
+            <p>Hier kunt u de instellingen wijzigen. Vergeet niet op opslaan te drukken. Dit icoon wordt zichtbaar rechtsboven
+              als er iets is aangepast.</p>
+          </div>
+          <div class="cards1" *ngIf="new">
+            <mat-card>
+              <mat-card-title>Thermostaat</mat-card-title>
+              <mat-card-content style="display:flex; flex-wrap:wrap">
+                <div class="no"></div>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Temperatuur" [(ngModel)]="new.temperature">
+                  <span matSuffix>&nbsp;℃</span>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="In- en uitschakel marge" [(ngModel)]="new.temperature_margin">
+                  <span matSuffix>&nbsp;℃</span>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Uitlees interval" [(ngModel)]="new.temperature_interval_seconds">
+                  <span matSuffix>&nbsp;sec</span>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Input pin" [(ngModel)]="new.temperature_pin"> </mat-form-field>
+              </mat-card-content>
+            </mat-card>
+            <div class="break"></div>
+            <mat-card>
+              <mat-card-title>Ruimte 1</mat-card-title>
+              <mat-card-content style="display:flex; flex-direction: column">
+                <mat-form-field>
+                  <input matInput placeholder="Naam" [(ngModel)]="new.area_1_name">
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Output pin" [(ngModel)]="new.area_1_pin">
+                </mat-form-field>
+                <mat-slide-toggle [(ngModel)]="new.area_1_enabled">Inschakelen</mat-slide-toggle>
+              </mat-card-content>
+            </mat-card>
+            <mat-card>
+              <mat-card-title>Ruimte 2</mat-card-title>
+              <mat-card-content style="display:flex; flex-direction: column">
+                <mat-form-field>
+                  <input matInput placeholder="Naam" [(ngModel)]="new.area_2_name">
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Output pin" [(ngModel)]="new.area_2_pin">
+                </mat-form-field>
+                <mat-slide-toggle [(ngModel)]="new.area_2_enabled">Inschakelen</mat-slide-toggle>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+        <mat-tab label="Sensors">
+          <div class="margin1">
+            <h1>Thermometer, Hygrometer, Slimme meter</h1>
+            <p>Hier kunt u alle ontvangen informatie van de sensors bekijken.</p>
+            <pre>{{status | json}}</pre>
+          </div>
+        </mat-tab>
+        <mat-tab label="Test">
+          <div class="margin1">
+            <h1>Dit is een test</h1>
+            <p>Hier kunt u experimenten met angular componenen. Zie ook:</p>
+            <ul>
+              <li>
+                <a mat-button href="https://angular.io" target="_blank">https://angular.io</a>
+              </li>
+              <li>
+                <a mat-button href="https://material.angular.io" target="_blank">https://material.angular.io</a>
+              </li>
+            </ul>
+
+            <button mat-button (click)="test()">Test</button>
+            <button mat-button>Omlaag</button>
+            <mat-checkbox>Check me!</mat-checkbox>
+            <mat-card>Simple card</mat-card>
+            <p>
+              <button mat-button (click)="sidenav.toggle()">Toggle</button>
+            </p>
+            <p>
+              <mat-radio-group class="example-radio-group" [formControl]="mode">
+                <label>Menu:</label>
+                <mat-radio-button value="over">Over</mat-radio-button>
+                <mat-radio-button value="side">Side</mat-radio-button>
+                <mat-radio-button value="push">Push</mat-radio-button>
+              </mat-radio-group>
+            </p>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,38 @@
+@import '~@angular/material/theming';
+@include mat-core();
+$primary: mat-palette($mat-yellow);
+$accent:  mat-palette($mat-blue);
+$theme: mat-dark-theme($primary, $accent);
+@include angular-material-theme($theme);
+
+$lg: 1024px; // large (desktop)
+$md: 480px; // medium (tablet)
+$space: 8px;
+// Responsive settings:
+@media (min-width: $lg) {
+  .hide-lg { display: none !important; }
+  .column-lg { flex-direction: column !important; }
+}
+@media (max-width: $lg - 1px) and (min-width: $md) {
+  .hide-md { display: none !important; }
+  .column-md { flex-direction: column !important; }
+}
+@media (max-width: $md - 1px) {
+  .hide-sm { display: none !important; }
+  .column-sm { flex-direction: column !important; }
+}
+
+body {margin:0; padding:0;}
+button { text-transform: uppercase }
+.margin1 { margin:2%; }
+.padding1 { padding:2%; }
+
+mat-sidenav { width: 260px; }
+mat-tab-body, mat-card, mat-card-title { @extend .margin1; }
+mat-card-actions { text-align:right; }
+mat-form-field, mat-checkbox, mat-slide-toggle { @extend .margin1; flex: 1; }
+.cards1 { display:flex; flex-wrap: wrap; mat-card { width: 350px; flex:1; } }
+div.no { overflow: hidden; height: 0px; width: 0px; } /* no collapsing margins https://stackoverflow.com/questions/1828804/how-do-i-uncollapse-a-margin */
+div.break { flex-basis: 100%; height:0; padding:0; } /* breaks apart cards, so that the next one always starts on a new line */
+mat-toolbar .mat-icon-button { margin-left: 1% !important; margin-right: 1% !important;}
+.nomargin h1 { margin:0 !important; }

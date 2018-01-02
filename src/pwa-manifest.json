@@ -1,0 +1,11 @@
+{
+  "short_name": "Thermostaat",
+  "name": "Thermostaat",
+  "icons": [
+    { "src":"assets/icon.png", "sizes": "16x16 32x32 96x96 144x144 192x192 194x194 256x256 512x512", "type": "image/png" }
+  ],
+  "start_url": "/",
+  "background_color": "#ffeb3b",
+  "theme_color": "#ffeb3b",
+  "display": "standalone"
+}
