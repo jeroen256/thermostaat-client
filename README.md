@@ -13,9 +13,9 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
-- Release: `ng build --output-path ../thermostaat-jeroen/wwwroot -prod`
-- Staging: `ng build --output-path ../thermostaat-jeroen/wwwroot -e staging`
-- Dubug:   `ng build --output-path ../thermostaat-jeroen/wwwroot -dev`
+- Release: `ng build --output-path ../thermostaat/wwwroot -prod`
+- Staging: `ng build --output-path ../thermostaat/wwwroot -e staging`
+- Dubug:   `ng build --output-path ../thermostaat/wwwroot -dev`
 
 ## Running unit tests
 
